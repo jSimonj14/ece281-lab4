@@ -75,6 +75,10 @@ begin
 	-- Clock count and divide Process -------------------
 	--   increment and compare f_count to k_DIV
 	--   rollover and toggle f_clk when count reaches k_DIV
+
+
+	
+	
 	countClock_proc : process(i_clk, i_reset)
 	begin
 		if i_reset = '1' then
