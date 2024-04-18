@@ -105,12 +105,12 @@ architecture top_basys3_arch of top_basys3 is
         generic ( constant k_WIDTH : natural  := 4); -- bits in input and output
         Port ( i_clk        : in  STD_LOGIC;
                i_reset        : in  STD_LOGIC; -- asynchronous
-               i_D3         : in  STD_LOGIC_VECTOR (k_WIDTH - 1 downto 0);
-               i_D2         : in  STD_LOGIC_VECTOR (k_WIDTH - 1 downto 0);
+              -- i_D3         : in  STD_LOGIC_VECTOR (k_WIDTH - 1 downto 0);
+              -- i_D2         : in  STD_LOGIC_VECTOR (k_WIDTH - 1 downto 0);
                i_D1         : in  STD_LOGIC_VECTOR (k_WIDTH - 1 downto 0);
                i_D0         : in  STD_LOGIC_VECTOR (k_WIDTH - 1 downto 0);
                o_data        : out STD_LOGIC_VECTOR (k_WIDTH - 1 downto 0);
-               o_sel        : out STD_LOGIC_VECTOR (3 downto 0)    -- selected data line (one-cold)
+               o_sel        : out STD_LOGIC   -- selected data line (one-cold)
         );
     end component TDM4;
     
@@ -136,12 +136,12 @@ architecture top_basys3_arch of top_basys3 is
     signal w_clock_reset : std_logic;
     signal w_floor_reset : std_logic;
     signal w_clk_tdm : std_logic;
-    signal w_D3 : std_logic_vector (4 - 1 downto 0);
-    signal w_D2 : std_logic_vector (4 - 1 downto 0);
+    --signal w_D3 : std_logic_vector (4 - 1 downto 0);
+    --signal w_D2 : std_logic_vector (4 - 1 downto 0);
     signal w_D1 : std_logic_vector (4 - 1 downto 0);
     signal w_D0 : std_logic_vector ( 4 - 1 downto 0);
     signal w_data : std_logic_vector ( 4 - 1 downto 0);
-    signal w_sel : std_logic_vector (3 downto 0);
+    signal w_sel : std_logic;
           
 begin
 	-- PORT MAPS ----------------------------------------
@@ -176,14 +176,14 @@ begin
 	tdm4_inst : TDM4 		--instantiation of clock_divider to take 
 	generic map (k_WIDTH => 4 )
     port map (  
-                            
+                         
        i_clk   => w_clk_tdm,
        i_reset => w_clock_reset,
-       i_D3(3 downto 1) => (others => '0'),
-       i_D3(0) => w_floor(4),
-       i_D2 => w_floor(3 downto 0),
-       i_D1 => (others => '0'),
-       i_D0 => (others => '0'),
+       i_D1(3 downto 1) => (others => '0'),
+       i_D1(0) => w_floor(4),
+       i_D0 => w_floor(3 downto 0),
+       --i_D1 => (others => '0'),
+       --i_D0 => (others => '0'),
        o_data => w_data,
        o_sel => w_sel
        
@@ -197,42 +197,12 @@ begin
 	led(15) <= w_clk; 
 	led(14 downto 0) <= (others => '0');
     
+    
+    --w_sel <= std_logic_vector(to_unsigned(to_integer(unsigned(w_sel)), w_sel'length));
 
-	-- leave unused switches UNCONNECTED. Ignore any warnings this causes.
-	
-	-- wire up active-low 7SD anodes (an) as required
-	-- Tie any unused anodes to power ('1') to keep them off
---       anodes: process(w_clk_tdm)
     
---        begin
-    
---            an <= not w_sel;
-    
---        end process;
-    
---        led <= (15 =>  w_clk, others => '0');
-    
---        cathodes: process(w_clk_tdm)
-    
---        begin
-    
---            if w_floor = "1111" then
-    
---                w_D0 <= "0001";
-    
---                w_D1 <= "0110";
-    
---            else
-    
---                w_D0 <= (w_floor  + 1) / 10 ;
-    
---                w_D1 <= (w_floor + 1) mod 10 ;
-    
---            end if;
-    
---        end process;
-
-    an(3 downto 2) <= w_sel(3 downto 2);
+    an(2) <= w_sel;
+    an(3) <= not w_sel;
 	an(0) <= '1';
 	an(1) <= '1';
 
